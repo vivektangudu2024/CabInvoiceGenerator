@@ -31,8 +31,9 @@ public class CabInvoiceTest {
         Ride[] rides = {new Ride(0.1, 3),
                         new Ride(2, 4)
         };
-        double fareCalculated = invoiceGenerator.calculateFare(rides);
-        assertEquals(29, fareCalculated);
+        InvoiceSummary invoiceCalculated = invoiceGenerator.calculateFare(rides);
+        InvoiceSummary expectedInvoiceSummary = new InvoiceSummary(2, 29);
+        assertEquals(expectedInvoiceSummary, invoiceCalculated);
     }
 
 }
