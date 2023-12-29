@@ -26,4 +26,13 @@ public class CabInvoiceTest {
         assertEquals(5, fareCalculated);
     }
 
+    @Test
+    void checkCalculateFareForMultipleRides(){
+        Ride[] rides = {new Ride(0.1, 3),
+                        new Ride(2, 4)
+        };
+        double fareCalculated = invoiceGenerator.calculateFare(rides);
+        assertEquals(29, fareCalculated);
+    }
+
 }
