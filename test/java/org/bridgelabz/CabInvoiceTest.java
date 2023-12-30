@@ -19,30 +19,40 @@ public class CabInvoiceTest {
     @Test
     void checkCalculateFareForMultipleRides() {
         Ride[] rides = {
-                new Ride("user1", 0.1, 3),
-                new Ride("user1", 2, 4)
+                new Ride("user1", 0.1, 3, RideType.NORMAL),
+                new Ride("user1", 2, 4, RideType.PREMIUM)
         };
         for (Ride ride : rides) {
             rideRepository.addRide(ride.getUserId(), ride);
         }
 
-        InvoiceSummary invoiceCalculated = invoiceGenerator.calculateFare("user1");
-        InvoiceSummary expectedInvoiceSummary = new InvoiceSummary(2, 29);
+        InvoiceSummary invoiceCalculated = invoiceGenerator.calculateFare("user1", RideType.NORMAL);
+        InvoiceSummary expectedInvoiceSummary = new InvoiceSummary(1, 5.5);
+        assertEquals(expectedInvoiceSummary, invoiceCalculated);
+
+        invoiceCalculated = invoiceGenerator.calculateFare("user1", RideType.PREMIUM);
+        expectedInvoiceSummary = new InvoiceSummary(1, 34);
         assertEquals(expectedInvoiceSummary, invoiceCalculated);
     }
+
     @Test
     void checkCalculateFareForUserNotFound() {
         assertThrows(IllegalArgumentException.class, () -> {
-            // Attempting to calculate fare for a user that does not exist in the repository
-            invoiceGenerator.calculateFare("nonexistentUser");
+            invoiceGenerator.calculateFare("nonexistentUser", RideType.NORMAL);
         });
     }
 
     @Test
     void checkCalculateFareForNullUser() {
-        assertThrows(NullPointerException.class, () -> {
-            // Attempting to calculate fare with a null user ID
-            invoiceGenerator.calculateFare(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            invoiceGenerator.calculateFare(null, RideType.PREMIUM);
+        });
+    }
+
+    @Test
+    void checkCalculateFareForInvalidRideType() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            invoiceGenerator.calculateFare("user1", null);
         });
     }
 }
